@@ -4,8 +4,8 @@ import vocabulary from "../data/vocabulary";
 
 import FlipCard from "../components/FlipCard";
 
-import "../styles/home.css";
-
+import "../styles/Home.css";
+import "../styles/learn.css";
 export default function Learn() {
   const [cardStatus, setCardStatus] = useState(""); 
   const [wordCount, setWordCount]  = useState("");

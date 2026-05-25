@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { getWordData } from "../services/dictionaryApi";
 import FlipCard from "../components/FlipCard";
-import "../styles/home.css";
+import "../styles/Home.css";
 import "../styles/search-bar.css";
 import { translateToUzbek } from "../services/translateApi";
 
