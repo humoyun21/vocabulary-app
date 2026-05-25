@@ -48,33 +48,51 @@ useEffect(() => {
 
 }, [unknownWords]);
 
+const [selectedLevel, setSelectedLevel]
+  = useState("All");
+
   // RANDOM WORDS
-  function startSession() {
+ function startSession() {
 
-    const shuffled = [...vocabulary]
-      .sort(() => Math.random() - 0.5);
+  // LEVEL FILTER
+  const filteredWords =
 
-    const selected =
-      shuffled.slice(0, Number(wordCount));
+    selectedLevel === "All"
 
-    setKnownWords([]);
+      ? vocabulary
 
-setUnknownWords([]);
+      : vocabulary.filter(
+          (word) =>
+            word.level === selectedLevel
+        );
 
-localStorage.removeItem(
-  "knownWords"
-);
+  // RANDOM
+  const shuffled = [...filteredWords]
+    .sort(() => Math.random() - 0.5);
 
-localStorage.removeItem(
-  "unknownWords"
-);
+  // SELECTED COUNT
+  const selected =
+    shuffled.slice(0, Number(wordCount));
 
-setCurrentIndex(0);
+  // RESET
+  setKnownWords([]);
 
-setWords(selected);
+  setUnknownWords([]);
 
-setSessionStarted(true);
-  }
+  localStorage.removeItem(
+    "knownWords"
+  );
+
+  localStorage.removeItem(
+    "unknownWords"
+  );
+
+  setCurrentIndex(0);
+
+  setWords(selected);
+
+  setSessionStarted(true);
+}
 
   const currentWord =
     words[currentIndex];
@@ -136,7 +154,7 @@ setSessionStarted(true);
     }
   }
 
-  // START SCREEN
+  // START SCREEN // Level selector
   if (!sessionStarted) {
 
     return (
@@ -148,6 +166,46 @@ setSessionStarted(true);
           <h1 style={{ color: "white" }}>
             Start Learning
           </h1>
+    
+          <div className="level-selector">
+
+  <select
+    value={selectedLevel}
+    onChange={(e) =>
+      setSelectedLevel(
+        e.target.value
+      )
+    }
+  >
+
+    <option value="All">
+      All Levels
+    </option>
+
+    <option value="A1">
+      A1
+    </option>
+
+    <option value="A2">
+      A2
+    </option>
+
+    <option value="B1">
+      B1
+    </option>
+
+    <option value="B2">
+      B2
+    </option>
+
+    <option value="C1">
+      C1
+    </option>
+
+  </select>
+
+          </div>
+
 
           <div className="search-bar">
 
