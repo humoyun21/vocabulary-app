@@ -1,33 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import "../styles/FlipCard.css";
 
-export default function FlipCard({
-  english,
-  uzbek,
-  definition,
-  cardStatus,
-}) {
+export default function FlipCard({ english, uzbek, definition, cardStatus }) {
   const [flipped, setFlipped] = useState(false);
+
+  useEffect(() => {
+    setFlipped(false);
+  }, [english]);
+
   return (
     <div
-       className={`
-    flip-card
-    ${flipped ? "flipped" : ""}
-    ${cardStatus}
-  `}
-      onClick={() => setFlipped(!flipped)}
+      className={`flip-container ${flipped ? "flipped" : ""} ${cardStatus}`}
+      onClick={() => setFlipped((prev) => !prev)}
     >
-      <div className="flip-card-inner">
+      <div className="flip-inner">
         {/* FRONT */}
-        <div className="flip-card-front">
-          <h2>{english}</h2>
-          <p>
-            Click to see translation
-          </p>
+        <div className="flip-face flip-front">
+          <span className="card-hint">Tap to reveal</span>
+          <h2 className="card-word">{english}</h2>
+          <p className="card-sub">What's the translation?</p>
         </div>
+
         {/* BACK */}
-        <div className="flip-card-back">
-          <h2>{uzbek}</h2>
-          <p>{definition}</p>
+        <div className="flip-face flip-back">
+          <span className="card-hint">Translation</span>
+          <h2 className="card-translation">{uzbek}</h2>
+          <p className="card-level">{definition}</p>
         </div>
       </div>
     </div>

@@ -8,7 +8,8 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import LearnedWordsList from "./pages/LearnedWordsList";
+import PracticeWordsList from "./pages/PracticeWordsList";
 function App() {
   return (
     <Routes>
@@ -16,19 +17,13 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<ProtectedRoute> 
-          <Dashboard />
-    </ProtectedRoute>} />
-        <Route path="/learn" element={
-    <ProtectedRoute>
-      <Learn />
-    </ProtectedRoute>
-  }
+        <Route path="/dashboard" element={<ProtectedRoute>  <Dashboard /> </ProtectedRoute>} />
+        <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} /></Route>
+        <Route path="/learned" element={<LearnedWordsList />} />
+        <Route path="/practice" element={<PracticeWordsList />} />
+        <Route path="*" element={<NotFound />} />
 
-/>
-      </Route>
-
-      <Route path="*" element={<NotFound />} />
+      
     </Routes>
   );
 }

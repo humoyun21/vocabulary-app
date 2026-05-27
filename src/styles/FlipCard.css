@@ -1,0 +1,95 @@
+/* ========== FLIP CARD ========== */
+.flip-container {
+  perspective: 1000px;
+  height: 190px;
+  width: 100%;
+  cursor: pointer;
+  margin-bottom: 24px;
+  border-radius: 20px;
+}
+
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.flip-container.flipped .flip-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 20px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12),
+              0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.3s;
+}
+
+.flip-back {
+  transform: rotateY(180deg);
+  background: rgba(80, 180, 255, 0.1);
+  border-color: rgba(100, 210, 255, 0.35);
+}
+
+/* status flash */
+.flip-container.known .flip-face {
+  border-color: rgba(100, 240, 180, 0.5);
+}
+.flip-container.unknown .flip-face {
+  border-color: rgba(255, 120, 120, 0.5);
+}
+
+.card-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.card-word {
+  font-family: 'Space Grotesk', 'Outfit', sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  margin: 0 0 10px;
+}
+
+.card-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
+.card-translation {
+  font-family: 'Space Grotesk', 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: rgba(120, 220, 255, 0.95);
+  letter-spacing: -0.3px;
+  margin: 0 0 8px;
+}
+
+.card-level {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  letter-spacing: 0.4px;
+}
