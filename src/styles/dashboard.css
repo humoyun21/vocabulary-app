@@ -374,7 +374,7 @@ svg.ring {
 
 
 
-
+/* 
 .words-list-container {
   padding: 1.5rem;
 }
@@ -428,7 +428,7 @@ svg.ring {
   background: transparent;
   cursor: pointer;
   font-size: 14px;
-}
+} */
 /* ── Responsive ── */
 @media (max-width: 1024px) {
   .dashboard-page { padding: 32px 28px 50px; }
