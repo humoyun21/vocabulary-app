@@ -4,21 +4,18 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import "../../styles/navbar.css";
 
-/* ── Inline SVG icons (no external dep needed) ── */
 const IconHome = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
     <path d="M9 21V12h6v9"/>
   </svg>
 );
-
 const IconLearn = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
   </svg>
 );
-
 const IconDashboard = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -27,7 +24,6 @@ const IconDashboard = () => (
     <rect x="3" y="14" width="7" height="7" rx="1"/>
   </svg>
 );
-
 const IconLogin = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
@@ -35,7 +31,6 @@ const IconLogin = () => (
     <line x1="15" y1="12" x2="3" y2="12"/>
   </svg>
 );
-
 const IconLogout = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -43,7 +38,6 @@ const IconLogout = () => (
     <line x1="21" y1="12" x2="9" y2="12"/>
   </svg>
 );
-
 const IconUser = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -51,7 +45,6 @@ const IconUser = () => (
   </svg>
 );
 
-/* ── Helpers ── */
 function getInitials(user) {
   if (!user) return "?";
   if (user.displayName) {
@@ -69,44 +62,44 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const location                = useLocation();
-  const menuRef                 = useRef(null);
 
-  /* Auth state */
+  // FIX: separate refs for nav and mobile menu
+  const navRef        = useRef(null);
+  const mobileMenuRef = useRef(null);
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
     return () => unsub();
   }, []);
 
-  /* Scroll shadow */
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* Close mobile menu on route change */
+  // Close on route change
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  /* Close on outside click */
+  // FIX: outside click checks BOTH nav and mobile menu
   useEffect(() => {
     if (!menuOpen) return;
     const handler = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
+      const inNav  = navRef.current?.contains(e.target);
+      const inMenu = mobileMenuRef.current?.contains(e.target);
+      if (!inNav && !inMenu) {
         setMenuOpen(false);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    // FIX: use 'click' not 'mousedown' so Link navigation fires first
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
   }, [menuOpen]);
 
   async function handleLogout() {
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.error(err);
-    }
+    try { await signOut(auth); } catch (err) { console.error(err); }
     setMenuOpen(false);
   }
 
@@ -114,22 +107,19 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`navbar${scrolled ? " scrolled" : ""}`} ref={menuRef}>
+      <nav className={`navbar${scrolled ? " scrolled" : ""}`} ref={navRef}>
 
-        {/* ── Logo ── */}
         <Link to="/" className="logo">
           <div className="logo-icon">V</div>
           <span className="logo-text">Vocab<span>App</span></span>
         </Link>
 
-        {/* ── Desktop nav links ── */}
         <ul className="nav-links">
           <li>
             <Link to="/" className={isActive("/") ? "active" : ""}>
               <IconHome /> Home
             </Link>
           </li>
-
           {user && (
             <>
               <li>
@@ -146,7 +136,6 @@ export default function Navbar() {
           )}
         </ul>
 
-        {/* ── Desktop actions ── */}
         <div className="nav-actions">
           {!user ? (
             <>
@@ -171,21 +160,21 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* ── Hamburger (mobile) ── */}
         <button
           className={`hamburger${menuOpen ? " open" : ""}`}
           onClick={() => setMenuOpen((v) => !v)}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
         >
-          <span />
-          <span />
-          <span />
+          <span /><span /><span />
         </button>
       </nav>
 
-      {/* ── Mobile menu ── */}
-      <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
+      {/* FIX: mobile menu has its own ref, separate from nav */}
+      <div
+        className={`mobile-menu${menuOpen ? " open" : ""}`}
+        ref={mobileMenuRef}
+      >
         <Link to="/" className={isActive("/") ? "active" : ""}>
           <IconHome /> Home
         </Link>
@@ -205,7 +194,7 @@ export default function Navbar() {
 
         {!user ? (
           <>
-            <Link to="/login">
+            <Link to="/login" className={isActive("/login") ? "active" : ""}>
               <IconLogin /> Login
             </Link>
             <Link to="/register" className="btn-primary-mobile">
@@ -219,7 +208,6 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Spacer so page content isn't hidden under fixed navbar */}
       <div className="navbar-spacer" />
     </>
   );
