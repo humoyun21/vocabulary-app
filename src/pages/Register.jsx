@@ -170,12 +170,12 @@ export default function Register() {
 
           {/* Password */}
           <div className="auth-field">
-            <label className="auth-label">Password</label>
+            <label className="auth-label"> Yor Email Password</label>
             <div className="auth-input-wrap">
               <span className="auth-input-icon">🔒</span>
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Min. 8 characters"
+                placeholder=""
                 value={password}
                 onChange={handlePasswordChange}
               />
@@ -189,7 +189,7 @@ export default function Register() {
               </button>
             </div>
 
-            {/* Strength meter */}
+            {/* Strength meter
             {password.length > 0 && (
               <div className="auth-strength">
                 {[0, 1, 2, 3].map((i) => (
@@ -213,7 +213,7 @@ export default function Register() {
                   {strengthLabels[strength - 1] || ""}
                 </span>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Terms checkbox */}
